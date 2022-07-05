@@ -11,10 +11,8 @@ import { router as authRoute } from './routes/auth';
 import { router as orderRoute } from './routes/order';
 
 
-const allowedOrigins = ['http://localhost:3000'];
-
 const options: cors.CorsOptions = {
-    origin: allowedOrigins
+    origin: '*'
 };
 
 // connect db
@@ -30,4 +28,4 @@ app.use(express.json());
 app.use('/api/user/', authRoute);
 app.use('/api/order/', orderRoute);
 
-app.listen(3000, () => console.log('server running'));
+app.listen(process.env.PORT || 8080, () => console.log('server running'));
