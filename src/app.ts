@@ -12,7 +12,9 @@ import { router as orderRoute } from './routes/order';
 
 
 const options: cors.CorsOptions = {
-    origin: '*'
+    origin: '*',
+    methods: ['GET', 'POST', 'DELETE', 'PATCH'],
+    credentials: true,
 };
 
 // connect db
