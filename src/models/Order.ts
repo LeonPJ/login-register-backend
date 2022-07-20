@@ -15,6 +15,14 @@ const OrderSchema: Schema = new Schema({
         type: String,
         require: true,
     },
+    amount: {
+        type: Number,
+        require: true,
+    },
+    payment: {
+        type: Boolean,
+        require: true,
+    },
     barrelType: {
         type: Number,
         require: true,

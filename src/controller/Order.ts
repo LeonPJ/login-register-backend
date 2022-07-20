@@ -3,7 +3,7 @@ import { Router, Request, Response, NextFunction } from 'express'
 import Order from '../models/Order';
 
 export const createOrder = async (req: Request, res: Response, next: NextFunction) => {
-    const { name, phone, address, barrelType, sendBarrel, backBarrel, customerType } = req.body;
+    const { name, phone, address, barrelType, sendBarrel, backBarrel, customerType, amount, payment } = req.body;
 
     const data = new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' }).replace('/', '-').replace('/', '-').replace('上午', '').replace('下午', '');
 
@@ -11,6 +11,8 @@ export const createOrder = async (req: Request, res: Response, next: NextFunctio
         name: name,
         phone: phone,
         address: address,
+        amount: amount,
+        payment: payment,
         barrelType: barrelType,
         sendBarrel: sendBarrel,
         backBarrel: backBarrel,
@@ -74,7 +76,7 @@ export const deleteOrder = async (req: Request, res: Response, next: NextFunctio
 
 export const updateOrder = async (req: Request, res: Response, next: NextFunction) => {
     const { orderId } = req.params;
-    const { name, phone, address, barrelType, sendBarrel, backBarrel, customerType } = req.body;
+    const { name, phone, address, barrelType, sendBarrel, backBarrel, customerType, amount, payment } = req.body;
 
     const order = await Order.findOne({ createdAt: orderId });
     if (!order)

@@ -5,10 +5,10 @@ export default interface IUser extends Document {
     name: String;
     phone: string;
     address: string;
+    amount: Number;
+    payment: Boolean;
+    customerType: string;
     barrelType: string;
     sendBarrel: number;
     backBarrel: number;
-    customerType: string;
-
-    // createAt: Data;
 }
