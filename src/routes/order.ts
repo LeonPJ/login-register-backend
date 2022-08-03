@@ -10,8 +10,8 @@ router.post('/create', verifyToken, createOrder);
 
 router.get('/get', verifyToken, readAll);
 
-router.get('/get/:orderId', verifyToken, readOrder);
+router.get('/get/:id', verifyToken, readOrder);
 
-router.delete('/delete/:orderId', verifyToken, deleteOrder);
+router.delete('/delete/:id', verifyToken, deleteOrder);
 
-router.patch('/update/:orderId', verifyToken, updateOrder);
+router.patch('/update/:id', verifyToken, updateOrder);
