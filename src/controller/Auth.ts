@@ -1,6 +1,8 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import cookieSession from 'cookie-session';
+
 
 import User from '../models/User';
 import { registerValidation, loginValidation } from '../middleware/validation';
@@ -54,7 +56,9 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 
     // create a token
     if (user && validPass) {
-        const token = jwt.sign({ name: user.name }, process.env.TOKEN_SECRET!, { expiresIn: '1h' });
+        const token = jwt.sign({ name: user.name }, process.env.TOKEN_SECRET!, { expiresIn: '24h' });
+        // console.log(token);
         res.header('auth-token', token).send(token);
+        // res.cookie('auth-token', token);
     }
 }
