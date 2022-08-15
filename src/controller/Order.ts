@@ -31,7 +31,7 @@ export const createOrder = async (req: Request, res: Response, next: NextFunctio
 
 export const readAll = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const readAll = await Order.find();
+        const readAll = await Order.find({ "$and": [{ isDeleted: false }, { deletedAt: null }] });
         res.status(200).send(readAll);
     } catch (error) {
         res.status(404).send(error);
