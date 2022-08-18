@@ -5,7 +5,7 @@ import Order from '../models/Order';
 export const createOrder = async (req: Request, res: Response, next: NextFunction) => {
     const { name, phone, address, barrelType, sendBarrel, backBarrel, customerType, amount, payment } = req.body;
 
-    const data = new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' }).replace('/', '-').replace('/', '-').replace('上午', '').replace('下午', '');
+    const date = new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' }).replace('/', '-').replace('/', '-').replace('上午', '').replace('下午', '');
 
     const order = new Order({
         name: name,
@@ -17,8 +17,8 @@ export const createOrder = async (req: Request, res: Response, next: NextFunctio
         sendBarrel: sendBarrel,
         backBarrel: backBarrel,
         customerType: customerType,
-        updatedAt: data,
-        createdAt: data,
+        updatedAt: date,
+        createdAt: date,
     });
 
     const saveOrder = await order.save();
@@ -29,7 +29,6 @@ export const createOrder = async (req: Request, res: Response, next: NextFunctio
     }
 
     res.status(201).json({ "message": "create", "status": true, "_id": saveOrder._id });
-
 
 };
 
@@ -48,7 +47,7 @@ export const readOrder = async (req: Request, res: Response, next: NextFunction)
 
     const order = await Order.findOne({ _id: id });
     if (!order)
-        return res.status(401).json({ "message": "readOrder", "status": false, "id": id });
+        return res.status(401).json({ "message": "readOrder", "status": false, "_id": id });
     else {
         try {
             const readOrder = await Order.findOne({ _id: id });
@@ -65,12 +64,13 @@ export const deleteOrder = async (req: Request, res: Response, next: NextFunctio
     const order = await Order.findOne({ _id: id });
 
     if (!order)
-        return res.status(401).json({ "message": "delete", "status": false, "id": id });
+        return res.status(401).json({ "message": "delete", "status": false, "_id": id });
     else {
         try {
-            const data = new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' }).replace('/', '-').replace('/', '-').replace('上午', '').replace('下午', '');
-            await Order.updateOne({ _id: id }, { updatedAt: data, isDeleted: true, deletedAt: data });
-            res.status(201).json({ "message": "delete", "status": true, "id": id });
+            const date = new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' }).replace('/', '-').replace('/', '-').replace('上午', '').replace('下午', '');
+
+            await Order.updateOne({ _id: id }, { updatedAt: date, isDeleted: true, deletedAt: date });
+            res.status(201).json({ "message": "delete", "status": true, "_id": id });
         } catch (error) {
             res.status(404).send(error);
         }
@@ -84,16 +84,18 @@ export const updateOrder = async (req: Request, res: Response, next: NextFunctio
 
     const order = await Order.findOne({ _id: id });
     if (!order)
-        return res.status(401).json({ "message": "update", "status": false, "id": id });
+        return res.status(401).json({ "message": "update", "status": false, "_id": id });
     else {
 
         try {
-            const data = new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' }).replace('/', '-').replace('/', '-').replace('上午', '').replace('下午', '');
+            const date = new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' }).replace('/', '-').replace('/', '-').replace('上午', '').replace('下午', '');
 
-            await Order.updateOne({ _id: id }, req.body);
+            let updatedAt = { "updatedAt": date };
+            let updateDate = await Object.assign(req.body, updatedAt);
+            await Order.updateOne({ _id: id }, updateDate);
 
-            // await Order.updateOne({ createdAt: orderId }, { updatedAt: data });
-            res.status(201).json({ "message": "update", "status": true, "id": id });
+            // await Order.updateOne({ _id: _id }, updateDate);
+            res.status(201).json({ "message": "update", "status": true, "_id": id });
 
         } catch (error) {
             res.status(401).send(error);
