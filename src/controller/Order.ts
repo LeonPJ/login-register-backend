@@ -21,12 +21,16 @@ export const createOrder = async (req: Request, res: Response, next: NextFunctio
         createdAt: data,
     });
 
-    try {
-        const saveOrder = await order.save();
-        res.status(201).json({ "message": "create", "status": true, "id": data });
-    } catch (error) {
-        res.status(400).send(error);
+    const saveOrder = await order.save();
+
+    if (!saveOrder._id) {
+        res.status(201).json({ "message": "create", "status": false });
+        return;
     }
+
+    res.status(201).json({ "message": "create", "status": true, "_id": saveOrder._id });
+
+
 };
 
 export const readAll = async (req: Request, res: Response, next: NextFunction) => {
