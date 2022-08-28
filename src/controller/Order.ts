@@ -42,6 +42,45 @@ export const readAll = async (req: Request, res: Response, next: NextFunction) =
 
 };
 
+export const readAllName = async (req: Request, res: Response, next: NextFunction) => {
+
+    const { name } = req.params;
+
+    try {
+        const readAllName = await Order.find({ "$and": [{ name: name }, { isDeleted: false }, { deletedAt: null }] }).sort({ _id: -1 });
+        res.status(200).send(readAllName);
+    } catch (error) {
+        res.status(404).send(error);
+    }
+
+};
+
+export const readAllPhone = async (req: Request, res: Response, next: NextFunction) => {
+
+    const { phone } = req.params;
+
+    try {
+        const readAllPhone = await Order.find({ "$and": [{ phone: phone }, { isDeleted: false }, { deletedAt: null }] }).sort({ _id: -1 });
+        res.status(200).send(readAllPhone);
+    } catch (error) {
+        res.status(404).send(error);
+    }
+
+};
+
+export const readAllAddress = async (req: Request, res: Response, next: NextFunction) => {
+
+    const { address } = req.params;
+
+    try {
+        const readAllAddress = await Order.find({ "$and": [{ address: address }, { isDeleted: false }, { deletedAt: null }] }).sort({ _id: -1 });
+        res.status(200).send(readAllAddress);
+    } catch (error) {
+        res.status(404).send(error);
+    }
+
+};
+
 export const readOrder = async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
 
