@@ -7,10 +7,6 @@ import Order from '../models/Order';
 export const createOrder = async (req: Request, res: Response, next: NextFunction) => {
     const { name, phone, address, barrelType, sendBarrel, backBarrel, customerType, amount, payment, createdAt, updatedAt } = req.body;
 
-    // const date = new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' }).replace('/', '-').replace('/', '-').replace('上午', '').replace('下午', '');
-
-    // console.log(new Date());
-
     const order = new Order({
         name: name,
         phone: phone,
@@ -134,7 +130,7 @@ export const deleteOrder = async (req: Request, res: Response, next: NextFunctio
         return res.status(401).json({ "message": "delete", "status": false, "_id": id });
     else {
         try {
-            let timestamp = moment().format().replace('T', ' ').replace('+08:00', '');
+            const timestamp = moment().format().replace('T', ' ').slice(0, 19);
 
             await Order.updateOne({ _id: id }, { updatedAt: timestamp, isDeleted: true, deletedAt: timestamp });
             res.status(201).json({ "message": "delete", "status": true, "_id": id });
@@ -156,10 +152,10 @@ export const updateOrder = async (req: Request, res: Response, next: NextFunctio
     else {
 
         try {
-            let timestamp = moment().format().replace('T', ' ').replace('+08:00', '');
+            const timestamp = moment().format().replace('T', ' ').slice(0, 19);
 
-            let updatedAt = { "updatedAt": timestamp };
-            let updateDate = await Object.assign(req.body, updatedAt);
+            const updatedAt = { "updatedAt": timestamp };
+            const updateDate = await Object.assign(req.body, updatedAt);
             await Order.updateOne({ _id: id }, updateDate);
 
             // await Order.updateOne({ _id: _id }, updateDate);
