@@ -130,8 +130,8 @@ export const deleteOrder = async (req: Request, res: Response, next: NextFunctio
         return res.status(401).json({ "message": "delete", "status": false, "_id": id });
     else {
         try {
-            const timestamp = moment().format().replace('T', ' ').slice(0, 19);
 
+            const timestamp = moment().utc().utcOffset(+8).format().replace('T', ' ').slice(0, 19);
             await Order.updateOne({ _id: id }, { updatedAt: timestamp, isDeleted: true, deletedAt: timestamp });
             res.status(201).json({ "message": "delete", "status": true, "_id": id });
         } catch (error) {
@@ -152,8 +152,8 @@ export const updateOrder = async (req: Request, res: Response, next: NextFunctio
     else {
 
         try {
-            const timestamp = moment().format().replace('T', ' ').slice(0, 19);
 
+            const timestamp = moment().utc().utcOffset(+8).format().replace('T', ' ').slice(0, 19);
             const updatedAt = { "updatedAt": timestamp };
             const updateDate = await Object.assign(req.body, updatedAt);
             await Order.updateOne({ _id: id }, updateDate);
