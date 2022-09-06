@@ -21,29 +21,26 @@ export const createOrder = async (req: Request, res: Response, next: NextFunctio
         updatedAt: updatedAt,
     });
 
-    const saveOrder = await order.save();
-
-    if (!saveOrder._id) {
-        res.status(201).json({ "message": "create", "status": false });
-        return;
+    try {
+        const saveOrder = await order.save();
+        res.status(200).json({ "message": "create", "status": true, "_id": saveOrder._id });
+    } catch (error) {
+        res.status(400).json({ "message": "create", "status": false });
     }
-
-    res.status(201).json({ "message": "create", "status": true, "_id": saveOrder._id });
-
 };
 
 export const readAll = async (req: Request, res: Response, next: NextFunction) => {
+
     try {
         const readAll = await Order.find({ "$and": [{ isDeleted: false }, { deletedAt: null }] }).sort({ _id: -1 });
         res.status(200).send(readAll);
     } catch (error) {
-        res.status(404).send(error);
+        res.status(400).send(error);
     }
 
 };
 
 export const readAllName = async (req: Request, res: Response, next: NextFunction) => {
-
     const { name } = req.params;
 
     try {
@@ -56,7 +53,6 @@ export const readAllName = async (req: Request, res: Response, next: NextFunctio
 };
 
 export const readAllPhone = async (req: Request, res: Response, next: NextFunction) => {
-
     const { phone } = req.params;
 
     try {
@@ -69,7 +65,6 @@ export const readAllPhone = async (req: Request, res: Response, next: NextFuncti
 };
 
 export const readAllAddress = async (req: Request, res: Response, next: NextFunction) => {
-
     const { address } = req.params;
 
     try {
@@ -82,25 +77,14 @@ export const readAllAddress = async (req: Request, res: Response, next: NextFunc
 };
 
 export const readAllMonth = async (req: Request, res: Response, next: NextFunction) => {
-
-    // const { month } = req.params;
-
     const startOfMonth = moment().startOf('month').format('YYYY-MM-DD 00:00:00');
     const endOfMonth = moment().endOf('month').format('YYYY-MM-DD 23:59:99');
 
     try {
-        const readAllMonth = await Order.find({
-            "$and": [{
-                createdAt: {
-                    $gte: startOfMonth,
-                    $lte: endOfMonth
-                }
-            },
-            { isDeleted: false }, { deletedAt: null }]
-        }).sort({ _id: -1 });
+        const readAllMonth = await Order.find({ "$and": [{ createdAt: { $gte: startOfMonth, $lte: endOfMonth } }, { isDeleted: false }, { deletedAt: null }] }).sort({ _id: -1 });
         res.status(200).send(readAllMonth);
     } catch (error) {
-        res.status(404).send(error);
+        res.status(400).send(error);
     }
 
 };
@@ -108,63 +92,41 @@ export const readAllMonth = async (req: Request, res: Response, next: NextFuncti
 export const readOrder = async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
 
-    const order = await Order.findOne({ _id: id });
-    if (!order)
-        return res.status(401).json({ "message": "readOrder", "status": false, "_id": id });
-    else {
-        try {
-            const readOrder = await Order.findOne({ _id: id });
-            res.status(200).send(readOrder);
-        } catch (error) {
-            res.status(404).send(error);
-        }
+    try {
+        const readOrder = await Order.findOne({ _id: id });
+        res.status(200).send(readOrder);
+    } catch (error) {
+        res.status(400).send(error);
     }
+
 };
 
 export const deleteOrder = async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
 
-    const order = await Order.findOne({ _id: id });
-
-    if (!order)
-        return res.status(401).json({ "message": "delete", "status": false, "_id": id });
-    else {
-        try {
-
-            const timestamp = moment().utc().utcOffset(+8).format().replace('T', ' ').slice(0, 19);
-            await Order.updateOne({ _id: id }, { updatedAt: timestamp, isDeleted: true, deletedAt: timestamp });
-            res.status(201).json({ "message": "delete", "status": true, "_id": id });
-        } catch (error) {
-            res.status(404).send(error);
-        }
+    try {
+        const timestamp = moment().utc().utcOffset(+8).format().replace('T', ' ').slice(0, 19);
+        await Order.updateOne({ _id: id }, { updatedAt: timestamp, isDeleted: true, deletedAt: timestamp });
+        res.status(200).json({ "message": "delete", "status": true, "_id": id });
+    } catch (error) {
+        // res.status(404).send(error);
+        res.status(400).json({ "message": "delete", "status": false, "_id": id });
     }
 
 };
 
 export const updateOrder = async (req: Request, res: Response, next: NextFunction) => {
-
     const { id } = req.params;
-    const { name, phone, address, barrelType, sendBarrel, backBarrel, customerType, amount, payment } = req.body;
 
-    const order = await Order.findOne({ _id: id });
-    if (!order)
-        return res.status(401).json({ "message": "update", "status": false, "_id": id });
-    else {
-
-        try {
-
-            const timestamp = moment().utc().utcOffset(+8).format().replace('T', ' ').slice(0, 19);
-            const updatedAt = { "updatedAt": timestamp };
-            const updateDate = await Object.assign(req.body, updatedAt);
-            await Order.updateOne({ _id: id }, updateDate);
-
-            // await Order.updateOne({ _id: _id }, updateDate);
-            res.status(201).json({ "message": "update", "status": true, "_id": id });
-
-        } catch (error) {
-            res.status(401).send(error);
-        }
-
+    try {
+        const timestamp = moment().utc().utcOffset(+8).format().replace('T', ' ').slice(0, 19);
+        const updatedAt = { "updatedAt": timestamp };
+        const updateDate = await Object.assign(req.body, updatedAt);
+        await Order.updateOne({ _id: id }, updateDate);
+        res.status(200).json({ "message": "update", "status": true, "_id": id });
+    } catch (error) {
+        // res.status(401).send(error);
+        res.status(400).json({ "message": "update", "status": false, "_id": id });
     }
 
 };
