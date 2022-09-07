@@ -94,9 +94,9 @@ export const newPassword = async (req: Request, res: Response, next: NextFunctio
     const result = await User.updateOne({ email }, { "password": newHashedPassword });
 
     if (!result.acknowledged || !result.modifiedCount)
-        return res.status(400).json({ "message": "new password changed", "status": false });
+        return res.status(400).json({ "message": "change password", "status": false });
 
-    res.status(200).json({ "message": "new password changed", "status": true });
+    res.status(200).json({ "message": "change password", "status": true });
 }
 
 export const forgotPassword = async (req: Request, res: Response, next: NextFunction) => {
@@ -124,7 +124,7 @@ export const forgotPassword = async (req: Request, res: Response, next: NextFunc
     const result = await User.updateOne({ email }, { "password": newHashedPassword });
 
     if (!result.acknowledged || !result.modifiedCount)
-        return res.status(400).json({ "message": "request new password", "status": false });
+        return res.status(400).json({ "message": "new password", "status": false });
 
     const transporter = nodemailer.createTransport({
         service: 'gmail',
@@ -147,9 +147,9 @@ export const forgotPassword = async (req: Request, res: Response, next: NextFunc
 
     try {
         await transporter.sendMail(mailOptions);
-        res.status(200).json({ "message": "request new password", "status": true });
+        res.status(200).json({ "message": "send mail", "status": true });
     } catch (error) {
-        res.status(400).json({ "message": "request new password", "status": false });
+        res.status(400).json({ "message": "send mail", "status": false });
     }
 
 }
