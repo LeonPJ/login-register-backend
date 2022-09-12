@@ -35,7 +35,7 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
         const saveUser = await user.save();
         res.status(200).json({ "message": "register", "status": true, "_id": saveUser._id });
     } catch (error) {
-        res.status(400).send(error);
+        res.status(400).json({ "message": "register", "status": false });
     }
 }
 
@@ -62,7 +62,8 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
         const token = jwt.sign({ name: user.name }, process.env.TOKEN_SECRET!, { expiresIn: '24h' });
         res.status(200).json({ "message": "auth token", "status": true, "token": token });
     } catch (error) {
-        res.status(400).send(error);
+        res.status(404).json({ "message": "auth token", "status": false });
+
     }
 
 }
