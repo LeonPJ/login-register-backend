@@ -21,13 +21,12 @@ const options: cors.CorsOptions = {
 // mongoose.connect(process.env.DB_CONNECT, { useNewUrlParser: true, useUnifiedTopology: true }, () => console.log('connect to db'));
 mongoose.connect(process.env.DB_CONNECT, () => console.log('connect to db'));
 
-
 // middleware
 app.use(cors(options));
 app.use(express.json());
 
 // route middleware
-app.use('/api/user/', authRoute);
-app.use('/api/order/', orderRoute);
+app.use('/user/', authRoute);
+app.use('/order/', orderRoute);
 
-app.listen(process.env.PORT || 8080, () => console.log('server running'));
+app.listen(4000, () => console.log('server running'));
