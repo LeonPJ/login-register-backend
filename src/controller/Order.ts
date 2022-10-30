@@ -80,8 +80,6 @@ export const readAllMonth = async (req: Request, res: Response, next: NextFuncti
     const startOfMonth = moment().startOf('month').format('YYYY-MM-DD 00:00:00');
     const endOfMonth = moment().endOf('month').format('YYYY-MM-DD 23:59:99');
 
-
-
     try {
         const readAllMonth = await Order.find({ "$and": [{ createdAt: { $gte: startOfMonth, $lte: endOfMonth } }, { isDeleted: false }, { deletedAt: null }] }).sort({ _id: -1 });
         res.status(200).send(readAllMonth);
