@@ -29,4 +29,4 @@ app.use(express.json());
 app.use('/user/', authRoute);
 app.use('/order/', orderRoute);
 
-app.listen(4000, () => console.log('server running'));
+app.listen(3000, () => console.log('server running'));
