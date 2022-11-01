@@ -76,13 +76,40 @@ export const readAllAddress = async (req: Request, res: Response, next: NextFunc
 
 };
 
-export const readAllMonth = async (req: Request, res: Response, next: NextFunction) => {
-    const startOfMonth = moment().startOf('month').format('YYYY-MM-DD 00:00:00');
-    const endOfMonth = moment().endOf('month').format('YYYY-MM-DD 23:59:99');
+export const readCurrentMonth = async (req: Request, res: Response, next: NextFunction) => {
+
+    const startDay = moment().startOf('month').format('YYYY-MM-DD 00:00:00');
+    const endDay = moment().endOf('month').format('YYYY-MM-DD 23:59:99');
 
     try {
-        const readAllMonth = await Order.find({ "$and": [{ createdAt: { $gte: startOfMonth, $lte: endOfMonth } }, { isDeleted: false }, { deletedAt: null }] }).sort({ _id: -1 });
-        res.status(200).send(readAllMonth);
+        const readCurrentMonth = await Order.find({ "$and": [{ createdAt: { $gte: startDay, $lte: endDay } }, { isDeleted: false }, { deletedAt: null }] }).sort({ _id: -1 });
+        res.status(200).send(readCurrentMonth);
+    } catch (error) {
+        res.status(400).send(error);
+    }
+
+};
+
+export const readCurrentPeriod = async (req: Request, res: Response, next: NextFunction) => {
+
+    const { year, month } = req.params;
+
+    let startDay = '';
+    let endDay = '';
+    if (month == '00') {// all year
+        startDay = year + '-' + '01' + '-' + '01' + ' 00:00:00';
+        endDay = year + '-' + '12' + '-' + '31' + ' 23:59:99';
+    } else if (month == '02' || month == '04' || month == '06' || month == '09' || month == '11') {
+        startDay = year + '-' + month + '-' + '01' + ' 00:00:00';
+        endDay = year + '-' + month + '-' + '30' + ' 23:59:99';
+    } else {
+        startDay = year + '-' + month + '-' + '01' + ' 00:00:00';
+        endDay = year + '-' + month + '-' + '31' + ' 23:59:99';
+    }
+
+    try {
+        const readCurrentPeriod = await Order.find({ "$and": [{ createdAt: { $gte: startDay, $lte: endDay } }, { isDeleted: false }, { deletedAt: null }] }).sort({ _id: -1 });
+        res.status(200).send(readCurrentPeriod);
     } catch (error) {
         res.status(400).send(error);
     }
@@ -123,7 +150,7 @@ export const updateOrder = async (req: Request, res: Response, next: NextFunctio
         const updatedAt = { "updatedAt": timestamp };
         const updateDate = await Object.assign(req.body, updatedAt);
         await Order.updateOne({ _id: id }, updateDate);
-        res.status(200).json({ "message": "update", "status": true, "_id": id });
+        res.status(200).json({ "message": "update", "status": true, "_id": id, "updatedAt": timestamp });
     } catch (error) {
         // res.status(401).send(error);
         res.status(400).json({ "message": "update", "status": false, "_id": id });
